@@ -1,0 +1,41 @@
+{
+    "scopeName": "source.simpleKubernetesLogs",
+    "patterns": [
+        {
+            "name": "timestamp",
+            "match": "\\d{2}/\\d{2}/\\d{4} \\d{2}:\\d{2}:\\d{2}",
+            "captures": { "0": { "name": "constant.numeric.timestamp.simpleKubernetesLogs" } }
+        },
+        {
+            "name": "log.level.debug",
+            "match": "\\bdbug\\b",
+            "captures": { "0": { "name": "keyword.debug.simpleKubernetesLogs" } }
+        },
+        {
+            "name": "log.level.info",
+            "match": "\\binfo\\b",
+            "captures": { "0": { "name": "keyword.info.simpleKubernetesLogs" } }
+        },
+        {
+            "name": "log.level.warn",
+            "match": "\\bwarn\\b",
+            "captures": { "0": { "name": "keyword.warn.simpleKubernetesLogs" } }
+        },
+        {
+            "name": "log.level.error",
+            "match": "\\berror\\b",
+            "captures": { "0": { "name": "keyword.error.simpleKubernetesLogs" } }
+        },
+        {
+            "name": "http.method",
+            "match": "\\b(GET|POST|PUT|DELETE)\\b",
+            "captures": { "0": { "name": "keyword.method.simpleKubernetesLogs" } }
+        },
+        {
+            "name": "http.status",
+            "match": "\\b(200|404|500|503)\\b",
+            "captures": { "0": { "name": "constant.numeric.status.simpleKubernetesLogs" } }
+        }
+    ]
+}
+  

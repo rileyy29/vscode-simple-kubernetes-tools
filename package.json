@@ -1,0 +1,479 @@
+{
+  "name": "simple-kubernetes-tools",
+  "displayName": "Simple Kubernetes Tools",
+  "description": "Providing simple tools for kubernetes cluster management into VS Code.",
+  "publisher": "rileyy29",
+  "author": {
+    "name": "Riley Hamilton"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rileyy29/vscode-simple-kubernetes-tools"
+  },
+  "icon": "resources/App.png",
+  "galleryBanner": {
+		"color": "#3a3d41",
+		"theme": "dark"
+	},
+  "homepage": "https://github.com/rileyy29/vscode-simple-kubernetes-tools/blob/main/README.md",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Azure",
+    "Other"
+  ],
+  "keywords": [
+    "Azure",
+    "AKS",
+    "Kubernetes"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "simpleKubernetesLogs",
+        "aliases": [
+          "Kubernetes Logs",
+          "simpleKubernetesLogs"
+        ],
+        "extensions": [
+          ".simpleKubernetesLogs"
+        ],
+        "configuration": "./syntaxes/simpleKubernetesLogs.tmLanguage.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "simpleKubernetesLogs",
+        "scopeName": "source.simpleKubernetesLogs",
+        "path": "./syntaxes/simpleKubernetesLogs.tmLanguage.json"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "simple-kubernetes-tools",
+          "title": "Simple Kubernetes Tools",
+          "icon": "$(server-process)"
+        }
+      ]
+    },
+    "views": {
+      "simple-kubernetes-tools": [
+        {
+          "id": "explorerView",
+          "name": "Cluster Explorer"
+        },
+        {
+          "id": "portForwardingView",
+          "name": "Port Forwarding",
+          "visibility": "collapsed"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "simple-kubernetes-tools.clusterAdd",
+          "when": "view == explorerView",
+          "group": "navigation@0"
+        },
+        {
+          "command": "simple-kubernetes-tools.itemRefresh",
+          "when": "view == explorerView",
+          "group": "navigation@1"
+        },
+        {
+          "command": "simple-kubernetes-tools.serviceForwardingClear",
+          "when": "view == portForwardingView",
+          "group": "navigation@0"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "simple-kubernetes-tools.serviceForwardingStop",
+          "when": "view == portForwardingView && viewItem == portForwarding-forwarding-session_running",
+          "group": "inline"
+        },
+        {
+          "command": "simple-kubernetes-tools.serviceForwardingStop",
+          "when": "view == portForwardingView && viewItem == portForwarding-forwarding-session_running",
+          "group": "navigation"
+        },
+        {
+          "command": "simple-kubernetes-tools.serviceForwardingStart",
+          "when": "view == explorerView && viewItem == explorer-resource-Services_running",
+          "group": "navigation"
+        },
+        {
+          "command": "simple-kubernetes-tools.podInspectLogs",
+          "when": "view == explorerView && viewItem == explorer-resource-Pods_running",
+          "group": "navigation"
+        },
+        {
+          "command": "simple-kubernetes-tools.itemRefresh",
+          "when": "view == explorerView && viewItem == explorer-namespace",
+          "group": "1_navigation@2"
+        },
+        {
+          "command": "simple-kubernetes-tools.itemRefresh",
+          "when": "view == explorerView && viewItem == explorer-category-Pods",
+          "group": "1_navigation@2"
+        },
+        {
+          "command": "simple-kubernetes-tools.itemRefresh",
+          "when": "view == explorerView && viewItem == explorer-category-Services",
+          "group": "1_navigation@2"
+        },
+        {
+          "command": "simple-kubernetes-tools.itemRefresh",
+          "when": "view == explorerView && (viewItem == explorer-clusterDisconnected || viewItem == explorer-clusterRunning || viewItem == explorer-clusterOffline)",
+          "group": "1_navigation@2"
+        },
+        {
+          "command": "simple-kubernetes-tools.itemRefresh",
+          "when": "view == explorerView && viewItem == explorer-category-Deployments",
+          "group": "1_navigation@2"
+        },
+        {
+          "command": "simple-kubernetes-tools.deploymentsRestart",
+          "when": "view == explorerView && viewItem == explorer-category-Deployments",
+          "group": "2_navigation"
+        },
+        {
+          "command": "simple-kubernetes-tools.deploymentRestart",
+          "when": "view == explorerView && viewItem == explorer-resource-Deployments_running",
+          "group": "inline"
+        },
+        {
+          "command": "simple-kubernetes-tools.deploymentRestart",
+          "when": "view == explorerView && viewItem == explorer-resource-Deployments_running",
+          "group": "navigation"
+        },
+        {
+          "command": "simple-kubernetes-tools.clusterOpenInWeb",
+          "when": "view == explorerView && (viewItem == explorer-clusterDisconnected || viewItem == explorer-clusterRunning || viewItem == explorer-clusterOffline)",
+          "group": "1_navigation@1"
+        },
+        {
+          "command": "simple-kubernetes-tools.clusterDisconnect",
+          "when": "view == explorerView && (viewItem == explorer-clusterRunning || viewItem == explorer-clusterOffline)",
+          "group": "1_navigation@3"
+        },
+        {
+          "command": "simple-kubernetes-tools.clusterRemove",
+          "when": "view == explorerView && (viewItem == explorer-clusterDisconnected || viewItem == explorer-clusterRunning || viewItem == explorer-clusterOffline)",
+          "group": "3_navigation"
+        },
+        {
+          "command": "simple-kubernetes-tools.clusterAdd",
+          "when": "view == explorerView && viewItem == explorer-provider",
+          "group": "navigation"
+        },
+        {
+          "command": "simple-kubernetes-tools.clusterStart",
+          "when": "view == explorerView && viewItem == explorer-clusterOffline",
+          "group": "2_navigation@3"
+        },
+        {
+          "command": "simple-kubernetes-tools.clusterStop",
+          "when": "view == explorerView && viewItem == explorer-clusterRunning",
+          "group": "2_navigation@1"
+        },
+        {
+          "command": "simple-kubernetes-tools.clusterRestart",
+          "when": "view == explorerView && viewItem == explorer-clusterRunning",
+          "group": "2_navigation@2"
+        },
+        {
+          "command": "simple-kubernetes-tools.clusterStart",
+          "when": "view == explorerView && viewItem == explorer-clusterOffline",
+          "group": "inline"
+        },
+        {
+          "command": "simple-kubernetes-tools.clusterStop",
+          "when": "view == explorerView && viewItem == explorer-clusterRunning",
+          "group": "inline"
+        },
+        {
+          "command": "simple-kubernetes-tools.clusterRestart",
+          "when": "view == explorerView && viewItem == explorer-clusterRunning",
+          "group": "inline"
+        },
+        {
+          "command": "simple-kubernetes-tools.clusterConnect",
+          "when": "view == explorerView && viewItem == explorer-clusterDisconnected",
+          "group": "inline"
+        },
+        {
+          "command": "simple-kubernetes-tools.clusterConnect",
+          "when": "view == explorerView && viewItem == explorer-clusterDisconnected",
+          "group": "1_navigation@3"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "simple-kubernetes-tools.logStop",
+          "when": "resourceLangId == simpleKubernetesLogs",
+          "group": "navigation@0"
+        },
+        {
+          "command": "simple-kubernetes-tools.logExport",
+          "when": "resourceLangId == simpleKubernetesLogs",
+          "group": "navigation@1"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "simple-kubernetes-tools.itemRefresh",
+          "when": "false"
+        },
+        {
+          "command": "simple-kubernetes-tools.deploymentRestart",
+          "when": "false"
+        },
+        {
+          "command": "simple-kubernetes-tools.deploymentsRestart",
+          "when": "false"
+        },
+        {
+          "command": "simple-kubernetes-tools.clusterRemove",
+          "when": "false"
+        },
+        {
+          "command": "simple-kubernetes-tools.clusterRestart",
+          "when": "false"
+        },
+        {
+          "command": "simple-kubernetes-tools.clusterStart",
+          "when": "false"
+        },
+        {
+          "command": "simple-kubernetes-tools.clusterStop",
+          "when": "false"
+        },
+        {
+          "command": "simple-kubernetes-tools.clusterOpenInWeb",
+          "when": "false"
+        },
+        {
+          "command": "simple-kubernetes-tools.clusterConnect",
+          "when": "false"
+        },
+        {
+          "command": "simple-kubernetes-tools.clusterDisconnect",
+          "when": "false"
+        },
+        {
+          "command": "simple-kubernetes-tools.serviceForwardingStart",
+          "when": "false"
+        },
+        {
+          "command": "simple-kubernetes-tools.serviceForwardingStop",
+          "when": "false"
+        },
+        {
+          "command": "simple-kubernetes-tools.serviceForwardingClear",
+          "when": "false"
+        },
+        {
+          "command": "simple-kubernetes-tools.podInspectLogs",
+          "when": "false"
+        },
+        {
+          "command": "simple-kubernetes-tools.logExport",
+          "when": "false"
+        },
+        {
+          "command": "simple-kubernetes-tools.logStop",
+          "when": "false"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "simple-kubernetes-tools.itemRefresh",
+        "title": "Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "simple-kubernetes-tools.serviceForwardingStart",
+        "title": "Start Port Forward"
+      },
+      {
+        "command": "simple-kubernetes-tools.serviceForwardingStop",
+        "title": "Stop",
+        "icon": "$(debug-disconnect)"
+      },
+      {
+        "command": "simple-kubernetes-tools.serviceForwardingClear",
+        "title": "Stop All",
+        "icon": "$(stop-circle)"
+      },
+      {
+        "command": "simple-kubernetes-tools.deploymentRestart",
+        "title": "Restart",
+        "icon": "$(debug-restart)"
+      },
+      {
+        "command": "simple-kubernetes-tools.deploymentsRestart",
+        "title": "Restart All"
+      },
+      {
+        "command": "simple-kubernetes-tools.clusterRemove",
+        "title": "Remove"
+      },
+      {
+        "command": "simple-kubernetes-tools.clusterAdd",
+        "title": "Add Cluster",
+        "icon": "./resources/AddPlug.svg"
+      },
+      {
+        "command": "simple-kubernetes-tools.clusterRestart",
+        "title": "Restart",
+        "icon": "$(debug-restart)"
+      },
+      {
+        "command": "simple-kubernetes-tools.clusterStop",
+        "title": "Stop",
+        "icon": "$(debug-stop)"
+      },
+      {
+        "command": "simple-kubernetes-tools.clusterStart",
+        "title": "Start",
+        "icon": "$(debug-start)"
+      },
+      {
+        "command": "simple-kubernetes-tools.clusterOpenInWeb",
+        "title": "Open in Web"
+      },
+      {
+        "command": "simple-kubernetes-tools.clusterConnect",
+        "title": "Connect",
+        "icon": "$(plug)"
+      },
+      {
+        "command": "simple-kubernetes-tools.clusterDisconnect",
+        "title": "Disconnect"
+      },
+      {
+        "command": "simple-kubernetes-tools.podInspectLogs",
+        "title": "Inspect Logs"
+      },
+      {
+        "command": "simple-kubernetes-tools.logExport",
+        "title": "Export Logs",
+        "icon": "$(desktop-download)"
+      },
+      {
+        "command": "simple-kubernetes-tools.logStop",
+        "title": "Stop Logs",
+        "icon": "$(debug-disconnect)"
+      }
+    ],
+    "configuration": [
+      {
+        "title": "General",
+        "order": 0,
+        "properties": {
+          "simpleKubernetesTools.general.autoConnect": {
+            "type": "boolean",
+            "default": false,
+            "description": "Automatically connect to clusters on-load."
+          },
+          "simpleKubernetesTools.general.debugLogs": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable developer-mode debug logging."
+          }
+        }
+      },
+      {
+        "title": "Beacon",
+        "order": 1,
+        "properties": {
+          "simpleKubernetesTools.beacon.reconnectionTime": {
+            "type": "number",
+            "default": 2,
+            "description": "Time in minutes before establishing a new connection to the cluster."
+          },
+          "simpleKubernetesTools.beacon.debounceTime": {
+            "type": "number",
+            "default": 6,
+            "description": "Time in seconds to debounce bursts of events for."
+          },
+          "simpleKubernetesTools.beacon.maxRetryAttempts": {
+            "type": "number",
+            "default": 3,
+            "description": "Number of attempts to attempt reconnection to a cluster."
+          }
+        }
+      },
+      {
+        "title": "Log Viewer",
+        "order": 2,
+        "properties": {
+          "simpleKubernetesTools.logViewer.maxSize": {
+            "type": "number",
+            "default": 512,
+            "description": "Maximum log size in KB to retain in the log viewer."
+          },
+          "simpleKubernetesTools.logViewer.rerouteOnPodKill": {
+            "type": "boolean",
+            "default": true,
+            "description": "Attempt to find a pod to reroute the log viewer to when the pod is killed."
+          }
+        }
+      },
+      {
+        "title": "Port Forwarding",
+        "order": 3,
+        "properties": {
+          "simpleKubernetesTools.portForwarding.useServiceName": {
+            "type": "boolean",
+            "default": true,
+            "description": "Use the service name for port forwarding servers as opposed to localhost."
+          }
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.96.0",
+    "@typescript-eslint/eslint-plugin": "^8.17.0",
+    "@typescript-eslint/parser": "^8.17.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "esbuild": "^0.24.0",
+    "eslint": "^9.16.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "@azure/arm-containerservice": "^21.3.0",
+    "@azure/arm-subscriptions": "^5.1.0",
+    "@azure/identity": "^4.6.0",
+    "@kubernetes/client-node": "^1.0.0",
+    "rxjs": "^7.8.1"
+  }
+}
