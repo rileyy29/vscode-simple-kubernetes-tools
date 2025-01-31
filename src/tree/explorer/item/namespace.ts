@@ -13,9 +13,16 @@ export class NamespaceItem extends BaseItem {
 
     async getChildren(): Promise<BaseItem[]> {
         return [
+            new CategoryItem(this.cluster, this.namespace, Category.ConfigMaps),
+            new CategoryItem(this.cluster, this.namespace, Category.CronJobs),
+            new CategoryItem(this.cluster, this.namespace, Category.DaemonSets),
             new CategoryItem(this.cluster, this.namespace, Category.Deployments),
+            new CategoryItem(this.cluster, this.namespace, Category.Jobs),
             new CategoryItem(this.cluster, this.namespace, Category.Pods),
-            new CategoryItem(this.cluster, this.namespace, Category.Services)
+            new CategoryItem(this.cluster, this.namespace, Category.ReplicaSets),
+            new CategoryItem(this.cluster, this.namespace, Category.Secrets),
+            new CategoryItem(this.cluster, this.namespace, Category.Services),
+            new CategoryItem(this.cluster, this.namespace, Category.StatefulSets)
         ];
     }
 }

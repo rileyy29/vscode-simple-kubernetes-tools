@@ -1,7 +1,7 @@
 import { Subscription } from 'rxjs';
 import { TreeItemCollapsibleState } from 'vscode';
 import { Cluster } from '../../../cloud/cluster';
-import { type ClientRunnableResource } from '../../../kubernetes/models';
+import { ClientResource, type ClientRunnableResource } from '../../../kubernetes/models';
 import { logger } from '../../../logger';
 import { beacon } from '../../../manager/beacon';
 import { BaseItem } from '../../base';
@@ -9,9 +9,16 @@ import { explorerTreeDataProvider } from '../explorer.provider';
 import { ResourceItem } from './resource';
 
 export enum Category {
+    ConfigMaps = 'Config Maps',
+    CronJobs = 'Cron Jobs',
+    DaemonSets = 'Daemon Sets',
     Deployments = 'Deployments',
+    Jobs = 'Jobs',
     Pods = 'Pods',
-    Services = 'Services'
+    ReplicaSets = 'Replica Sets',
+    Secrets = 'Secrets',
+    Services = 'Services',
+    StatefulSets = 'Stateful Sets'
 };
 
 export class CategoryItem extends BaseItem {
@@ -22,7 +29,7 @@ export class CategoryItem extends BaseItem {
         public namespace: string,
         private category: Category
     ) {
-        super(/^[a-z]/.test(namespace) ? category.toLowerCase() : category, TreeItemCollapsibleState.Collapsed, 'explorer-category-' + category);
+        super(category, TreeItemCollapsibleState.Collapsed, 'explorer-category-' + category);
     }
 
     setupSubscription() {
@@ -46,7 +53,7 @@ export class CategoryItem extends BaseItem {
     }
 
     async getChildren(): Promise<BaseItem[]> {
-        let resources: ClientRunnableResource[] = [];
+        let resources: ClientResource[] = [];
 
         switch (this.category) {
             case Category.Deployments:
@@ -57,6 +64,27 @@ export class CategoryItem extends BaseItem {
                 break;
             case Category.Services:
                 resources = await this.cluster.client.getServices(this.namespace);
+                break;
+            case Category.ConfigMaps:
+                resources = await this.cluster.client.getConfigMaps(this.namespace);
+                break;
+            case Category.Secrets:
+                resources = await this.cluster.client.getSecrets(this.namespace);
+                break;
+            case Category.ReplicaSets:
+                resources = await this.cluster.client.getReplicaSets(this.namespace);
+                break;
+            case Category.StatefulSets:
+                resources = await this.cluster.client.getStatefulSets(this.namespace);
+                break;
+            case Category.DaemonSets:
+                resources = await this.cluster.client.getDaemonSets(this.namespace);
+                break;
+            case Category.Jobs:
+                resources = await this.cluster.client.getJobs(this.namespace);
+                break;
+            case Category.CronJobs:
+                resources = await this.cluster.client.getCronJobs(this.namespace);
                 break;
         }
 

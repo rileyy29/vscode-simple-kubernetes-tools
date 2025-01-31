@@ -1,7 +1,7 @@
 import { TreeItemCollapsibleState } from 'vscode';
 import { Cluster } from '../../../cloud/cluster';
 import { SVG_ICONS } from '../../../config';
-import { ClientPod, ClientRunnableResource } from '../../../kubernetes/models';
+import { ClientPod, ClientResource, ClientRunnableResource } from '../../../kubernetes/models';
 import { BaseItem } from '../../base';
 import { Category } from './category';
 import { ResourceSubItem } from './resource-sub';
@@ -11,12 +11,12 @@ export class ResourceItem extends BaseItem {
         public cluster: Cluster,
         public namespace: string,
         public category: Category,
-        public resource: ClientRunnableResource
+        public resource: ClientRunnableResource | ClientResource
     ) {
         super(
             resource.name,
             category === Category.Pods ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.None,
-            'explorer-resource-' + category + '_' + (resource.isRunning ? 'running' : 'not_running'));
+            'explorer-resource-' + category + '_' + ((resource as ClientRunnableResource)?.isRunning ? 'running' : 'not_running'));
 
         this.tooltip = `${namespace}: ${resource.name}`;
         this.setIconPath();

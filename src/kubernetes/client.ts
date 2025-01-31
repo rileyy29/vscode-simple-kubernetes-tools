@@ -1,5 +1,5 @@
-import { AppsV1Api, CoreV1Api, KubeConfig, type V1Deployment } from '@kubernetes/client-node';
-import { type ClusterPortForwardableService, type ClientPod, type ClientResource, type ClientRunnableResource, type NamespacedClusterObject } from './models';
+import { AppsV1Api, BatchV1Api, CoreV1Api, KubeConfig, type V1Deployment } from '@kubernetes/client-node';
+import { type ClusterPortForwardableService, type ClientPod, type ClientResource, type ClientRunnableResource, type NamespacedClusterObject, ClientViewableResource } from './models';
 
 export class Client {
     private config: KubeConfig = new KubeConfig();
@@ -112,6 +112,83 @@ export class Client {
             service,
             namespace
         };
+    }
+
+    async getReplicaSets(namespace?: NamespacedClusterObject): Promise<ClientResource[]> {
+        const api = this.config.makeApiClient(AppsV1Api);
+        const response = !namespace || namespace === 'all' ?
+            await api.listReplicaSetForAllNamespaces() :
+            await api.listNamespacedReplicaSet({
+                namespace
+            });
+
+        return response.items.map(replica => ({ id: replica.metadata.uid, name: replica.metadata.name }));
+    }
+
+    async getStatefulSets(namespace?: NamespacedClusterObject): Promise<ClientResource[]> {
+        const api = this.config.makeApiClient(AppsV1Api);
+        const response = !namespace || namespace === 'all' ?
+            await api.listStatefulSetForAllNamespaces() :
+            await api.listNamespacedStatefulSet({
+                namespace
+            });
+            
+        return response.items.map(stateful => ({ id: stateful.metadata.uid, name: stateful.metadata.name }));
+    }
+
+    async getDaemonSets(namespace?: NamespacedClusterObject): Promise<ClientResource[]> {
+        const api = this.config.makeApiClient(AppsV1Api);
+        const response = !namespace || namespace === 'all' ?
+            await api.listDaemonSetForAllNamespaces() :
+            await api.listNamespacedDaemonSet({
+                namespace
+            });
+            
+        return response.items.map(daemon => ({ id: daemon.metadata.uid, name: daemon.metadata.name }));
+    }
+
+    async getJobs(namespace?: NamespacedClusterObject): Promise<ClientResource[]> {
+        const api = this.config.makeApiClient(BatchV1Api);
+        const response = !namespace || namespace === 'all' ?
+            await api.listJobForAllNamespaces() :
+            await api.listNamespacedJob({
+                namespace
+            });
+            
+        return response.items.map(job => ({ id: job.metadata.uid, name: job.metadata.name }));
+    }
+
+    async getCronJobs(namespace?: NamespacedClusterObject): Promise<ClientResource[]> {
+        const api = this.config.makeApiClient(BatchV1Api);
+        const response = !namespace || namespace === 'all' ?
+            await api.listCronJobForAllNamespaces() :
+            await api.listNamespacedCronJob({
+                namespace
+            });
+            
+        return response.items.map(cjob => ({ id: cjob.metadata.uid, name: cjob.metadata.name }));
+    }
+
+    async getConfigMaps(namespace?: NamespacedClusterObject): Promise<ClientViewableResource[]> {
+        const api = this.config.makeApiClient(CoreV1Api);
+        const response = !namespace || namespace === 'all' ?
+            await api.listConfigMapForAllNamespaces() :
+            await api.listNamespacedConfigMap({
+                namespace
+            });
+
+        return response.items.map(config => ({ id: config.metadata.uid, name: config.metadata.name, data: config.data }));
+    }
+
+    async getSecrets(namespace?: NamespacedClusterObject): Promise<ClientViewableResource[]> {
+        const api = this.config.makeApiClient(CoreV1Api);
+        const response = !namespace || namespace === 'all' ?
+            await api.listSecretForAllNamespaces() :
+            await api.listNamespacedSecret({
+                namespace
+            });
+
+        return response.items.map(secret => ({ id: secret.metadata.uid, name: secret.metadata.name, data: secret.data }));
     }
 
     async restartDeployments(): Promise<ClientResource[]>

@@ -10,6 +10,10 @@ export interface ClientRunnableResource extends ClientResource {
     isRunning: boolean;
 }
 
+export interface ClientViewableResource extends ClientResource {
+    data: { [key: string]: string; };
+}
+
 export interface ClientPod extends ClientRunnableResource {
     containerName: string;
     pod: V1Pod;
