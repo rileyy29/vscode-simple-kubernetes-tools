@@ -8,7 +8,11 @@ import { BaseItem } from '../../base';
 import { explorerTreeDataProvider } from '../explorer.provider';
 import { ResourceItem } from './resource';
 
-type Category = 'Deployments' | 'Pods' | 'Services';
+export enum Category {
+    Deployments = 'Deployments',
+    Pods = 'Pods',
+    Services = 'Services'
+};
 
 export class CategoryItem extends BaseItem {
     private subscription: Subscription;
@@ -27,7 +31,7 @@ export class CategoryItem extends BaseItem {
         }
 
         switch (this.category) {
-            case 'Pods':
+            case Category.Pods:
                 this.subscription = beacon.pipe(beacon.getEventsForCluster(this.cluster), {
                     action: ['ADDED', 'DELETED'],
                     namespace: this.namespace
@@ -45,13 +49,13 @@ export class CategoryItem extends BaseItem {
         let resources: ClientRunnableResource[] = [];
 
         switch (this.category) {
-            case 'Deployments':
+            case Category.Deployments:
                 resources = await this.cluster.client.getDeployments(this.namespace);
                 break;
-            case 'Pods':
+            case Category.Pods:
                 resources = await this.cluster.client.getPods(this.namespace);
                 break;
-            case 'Services':
+            case Category.Services:
                 resources = await this.cluster.client.getServices(this.namespace);
                 break;
         }

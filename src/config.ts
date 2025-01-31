@@ -1,6 +1,6 @@
+import path from 'path';
 import { Uri } from 'vscode';
 import { type ExternalProvider } from './cloud/models';
-import path from 'path';
 
 export const ID = 'simple-kubernetes-tools';
 export const ID_CONFIG = 'simpleKubernetesTools';
@@ -36,6 +36,16 @@ export const SVG_ICONS = {
     AddPlug: Uri.file(path.join(__dirname, '..', 'resources', 'AddPlug.svg')),
     Azure: Uri.file(path.join(__dirname, '..', 'resources', 'Azure.svg')),
     Azure_Cluster: Uri.file(path.join(__dirname, '..', 'resources', 'Azure_Cluster.svg')),
+    Pod: {
+        Online: {
+            light: Uri.file(path.join(__dirname, '..', 'resources', 'Extension', 'Pod', 'Light', 'Online.svg')),
+            dark: Uri.file(path.join(__dirname, '..', 'resources', 'Extension', 'Pod', 'Dark', 'Online.svg')),
+        },
+        Offline: {
+            light: Uri.file(path.join(__dirname, '..', 'resources', 'Extension', 'Pod', 'Light', 'Offline.svg')),
+            dark: Uri.file(path.join(__dirname, '..', 'resources', 'Extension', 'Pod', 'Dark', 'Offline.svg')),
+        }
+    }
 };
 
 export const PROVIDERS = [

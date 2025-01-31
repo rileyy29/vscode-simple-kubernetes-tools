@@ -1,7 +1,7 @@
 import { TreeItemCollapsibleState } from 'vscode';
 import { Cluster } from '../../../cloud/cluster';
 import { BaseItem } from '../../base';
-import { CategoryItem } from './category';
+import { Category, CategoryItem } from './category';
 
 export class NamespaceItem extends BaseItem {
     constructor(
@@ -13,9 +13,9 @@ export class NamespaceItem extends BaseItem {
 
     async getChildren(): Promise<BaseItem[]> {
         return [
-            new CategoryItem(this.cluster, this.namespace, 'Deployments'),
-            new CategoryItem(this.cluster, this.namespace, 'Pods'),
-            new CategoryItem(this.cluster, this.namespace, 'Services')
+            new CategoryItem(this.cluster, this.namespace, Category.Deployments),
+            new CategoryItem(this.cluster, this.namespace, Category.Pods),
+            new CategoryItem(this.cluster, this.namespace, Category.Services)
         ];
     }
 }
