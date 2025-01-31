@@ -62,8 +62,6 @@ export class CategoryItem extends BaseItem {
 
         this.setupSubscription();
 
-        return resources
-            .filter(resource => resource.isRunning)
-            .map(resource => new ResourceItem(this.cluster, this.namespace, this.category, resource));
+        return resources.map(resource => new ResourceItem(this.cluster, this.namespace, this.category, resource));
     }
 }
