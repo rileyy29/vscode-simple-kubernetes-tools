@@ -9,6 +9,6 @@ updates:
         patterns:
           - "@typescript-eslint/*"
   - package-ecosystem: "github-actions"
-    directory: "/
+    directory: "/"
     schedule:
       interval: "weekly"
