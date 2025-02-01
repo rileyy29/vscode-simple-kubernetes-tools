@@ -5,7 +5,7 @@
 
 ![VSC to Kubernetes](resources/Git/Readme_Banner.png)
 
-A Visual Studio Code extension that provides an easy way to view perform simple actions on your Kubernetes Clusters.  
+A Visual Studio Code extension that provides an easy way to view & perform simple actions on your Kubernetes Clusters.  
 
 You can perform simple actions such as:
 * Restart Deployments
