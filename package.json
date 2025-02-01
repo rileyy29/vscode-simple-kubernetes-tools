@@ -12,9 +12,9 @@
   },
   "icon": "resources/App.png",
   "galleryBanner": {
-		"color": "#3a3d41",
-		"theme": "dark"
-	},
+    "color": "#3a3d41",
+    "theme": "dark"
+  },
   "homepage": "https://github.com/rileyy29/vscode-simple-kubernetes-tools/blob/main/README.md",
   "license": "SEE LICENSE IN LICENSE.md",
   "version": "0.2.0",
@@ -443,18 +443,17 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run package",
-    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "compile": "npm run check-types && npm run lint && node esbuild.js --production",
     "watch": "npm-run-all -p watch:*",
     "watch:esbuild": "node esbuild.js --watch",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
-    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "package": "vsce package",
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "check-types": "tsc --noEmit",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "windows:test": "vscode-test"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
@@ -464,6 +463,7 @@
     "@typescript-eslint/parser": "^8.17.0",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
+    "@vscode/vsce": "^3.2.2",
     "esbuild": "^0.24.0",
     "eslint": "^9.16.0",
     "npm-run-all": "^4.1.5",
