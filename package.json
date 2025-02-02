@@ -105,14 +105,24 @@
           "group": "navigation"
         },
         {
+          "command": "simple-kubernetes-tools.itemCopyName",
+          "when": "view == explorerView && viewItem =~ /^explorer-(clusterDisconnected|clusterRunning|clusterOffline)$/",
+          "group": "1_navigation@2"
+        },
+        {
+          "command": "simple-kubernetes-tools.itemCopyName",
+          "when": "view == explorerView && viewItem =~ /^explorer-(resource-\\w+)$/",
+          "group": "1_navigation@1"
+        },
+        {
           "command": "simple-kubernetes-tools.serviceForwardingStart",
           "when": "view == explorerView && viewItem == explorer-resource-Services_running",
-          "group": "navigation"
+          "group": "2_navigation@1"
         },
         {
           "command": "simple-kubernetes-tools.podInspectLogs",
           "when": "view == explorerView && viewItem == explorer-resource-Pods_running",
-          "group": "navigation"
+          "group": "2_navigation@1"
         },
         {
           "command": "simple-kubernetes-tools.itemRefresh",
@@ -152,7 +162,7 @@
         {
           "command": "simple-kubernetes-tools.deploymentRestart",
           "when": "view == explorerView && viewItem == explorer-resource-Deployments_running",
-          "group": "navigation"
+          "group": "2_navigation@1"
         },
         {
           "command": "simple-kubernetes-tools.clusterOpenInWeb",
@@ -233,6 +243,10 @@
           "when": "false"
         },
         {
+          "command": "simple-kubernetes-tools.itemCopyName",
+          "when": "false"
+        },
+        {
           "command": "simple-kubernetes-tools.deploymentRestart",
           "when": "false"
         },
@@ -299,6 +313,10 @@
         "command": "simple-kubernetes-tools.itemRefresh",
         "title": "Refresh",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "simple-kubernetes-tools.itemCopyName",
+        "title": "Copy Name"
       },
       {
         "command": "simple-kubernetes-tools.serviceForwardingStart",

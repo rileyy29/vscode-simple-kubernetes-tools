@@ -22,6 +22,7 @@ import { podInspectLogsCommand } from './command/pod-inspect-logs';
 import { serviceForwardingClearCommand } from './command/service-forwarding-clear';
 import { logExportCommand } from './command/log-export';
 import { logStopCommand } from './command/log-stop';
+import { itemCopyNameCommand } from './command/item-copy-name';
 
 export function activate(context: ExtensionContext) {
 	stateManager.context = context;
@@ -32,6 +33,7 @@ export function activate(context: ExtensionContext) {
 	context.subscriptions.push(workspace.registerTextDocumentContentProvider('simpleKubernetesLogs', logContentProvider));
 
 	const commands = [
+		itemCopyNameCommand,
 		itemRefreshCommand,
 
 		clusterAddCommand,
