@@ -1,11 +1,12 @@
+import { azureProvider } from './azure';
 import { type Cluster, type ClusterIdentity } from './cluster';
-import { type ProviderSubscription } from './models';
+import { ExternalProvider, type ProviderAuthenticationToken, type ProviderSubscription } from './models';
 
 export interface CloudProvider {
     /**
      * Authenticate with the cloud provider.
      */
-    authenticate(): Promise<void>;
+    authenticate(): Promise<ProviderAuthenticationToken>;
 
     /**
      * Retrieve list of subscriptions from the provider.
@@ -29,4 +30,14 @@ export interface CloudProvider {
      */
     startCluster?(identifier: ClusterIdentity, wait?: boolean): Promise<void>;
     stopCluster?(identifier: ClusterIdentity, wait?: boolean): Promise<void>;
+}
+
+//! Static Functions
+
+export async function getAccessToken(provider: ExternalProvider) {
+    switch (provider) {
+        case 'Azure':
+            const response = await azureProvider.authenticate();
+            return response;
+    }
 }

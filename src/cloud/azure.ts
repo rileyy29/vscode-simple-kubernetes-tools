@@ -2,18 +2,24 @@ import { ContainerServiceClient } from '@azure/arm-containerservice';
 import { SubscriptionClient } from '@azure/arm-subscriptions';
 import { AzureCliCredential, type TokenCredential } from '@azure/identity';
 import { window } from 'vscode';
-import { Cluster, type ClusterIdentity } from './cluster';
-import { type ProviderSubscription } from './models';
-import { type CloudProvider } from './provider';
 import { logger } from '../logger';
+import { Cluster, type ClusterIdentity } from './cluster';
+import { type ProviderAuthenticationToken, type ProviderSubscription } from './models';
+import { type CloudProvider } from './provider';
 
 const ENDPOINT_TOKEN_AZURE = 'https://management.azure.com/.default';
 
 class AzureProvider implements CloudProvider {
     private credential: TokenCredential = null;
+    private token: ProviderAuthenticationToken = null;
 
-    async authenticate(): Promise<void> {
+    get isTokenExpired(): boolean {
+        return this.token.refreshAfterTimestamp <= Date.now();
+    }
+
+    async authenticate(): Promise<ProviderAuthenticationToken> {
         await this.getCredential();
+        return this.token;
     }
 
     async getSubscriptions(): Promise<ProviderSubscription[]> {
@@ -80,19 +86,12 @@ class AzureProvider implements CloudProvider {
     }
 
     private async getCredential(): Promise<TokenCredential> {
-        if (this.credential) {
-            try {
-                await this.credential.getToken(ENDPOINT_TOKEN_AZURE);
-                return this.credential;
-            } catch (error: any) {
-                logger.error('Unable to authenticate using cached credential.', error.message);
-            }
+        if (this.credential && this.token && !this.isTokenExpired) {
+            return this.credential;
         }
 
         try {
-            const newCredential = new AzureCliCredential();
-            await newCredential.getToken(ENDPOINT_TOKEN_AZURE);
-    
+            const newCredential = await this.getNewCredential();
             this.credential = newCredential;
             return newCredential;
         } catch (error: any) {
@@ -100,7 +99,14 @@ class AzureProvider implements CloudProvider {
             window.showWarningMessage('Unable to authenticate via the Azure CLI. Run `az login`.');
             throw error;
         }
-    }    
+    }
+
+    private async getNewCredential(): Promise<TokenCredential> {
+        const credential = new AzureCliCredential();
+        const token = await credential.getToken(ENDPOINT_TOKEN_AZURE);
+        this.token = token;
+        return credential;
+    }
 
     private deriveResourceGroup(spec: string): string | null {
         return spec.match(/resourcegroups\/([^\/]+)/)[1];
