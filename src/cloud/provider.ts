@@ -1,11 +1,11 @@
 import { type Cluster, type ClusterIdentity } from './cluster';
-import { type ProviderSubscription } from './models';
+import { type ProviderAuthenticationToken, type ProviderSubscription } from './models';
 
 export interface CloudProvider {
     /**
      * Authenticate with the cloud provider.
      */
-    authenticate(): Promise<void>;
+    authenticate(): Promise<ProviderAuthenticationToken>;
 
     /**
      * Retrieve list of subscriptions from the provider.

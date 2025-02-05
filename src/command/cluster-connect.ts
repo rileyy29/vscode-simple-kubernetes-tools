@@ -1,26 +1,33 @@
+import { window } from 'vscode';
 import { beacon } from '../manager/beacon';
-import { stateManager } from '../manager/state-manager';
 import { explorerTreeDataProvider } from '../tree/explorer/explorer.provider';
 import { ClusterNode } from '../tree/explorer/item/cluster';
 import { Command } from './command';
 
 export const clusterConnectCommand = new Command('clusterConnect', async (_, item: ClusterNode) => {
-    item._isConnecting = true;
-    item._isConnected = false;
-    explorerTreeDataProvider.refreshItem(item);
+    const updateItemStatus = (isConnecting: boolean, isConnected: boolean) => {
+        item._isConnecting = isConnecting;
+        item._isConnected = isConnected;
+        explorerTreeDataProvider.refreshItem(item);
+    };
 
-    const cluster = await item.setClient();
-    await beacon.start(cluster);
+    updateItemStatus(true, false);
 
-    item._isConnecting = false;
-    item._isConnected = true;
-    explorerTreeDataProvider.refreshItem(item);
+    try {
+        const cluster = await item.setClient();
+        await beacon.start(cluster);
 
-    item.subscription = beacon
-        .getStatusForCluster(cluster)
-        .subscribe((isRunning) => {
-            item._isRunning = isRunning;
-            item.cluster.isRunning = isRunning;
-            explorerTreeDataProvider.refreshItem(item);
-        });
+        updateItemStatus(false, true);
+
+        item.subscription = beacon
+            .getStatusForCluster(cluster)
+            .subscribe((isRunning) => {
+                item._isRunning = isRunning;
+                item.cluster.isRunning = isRunning;
+                explorerTreeDataProvider.refreshItem(item);
+            });
+    } catch (error: any) {
+        updateItemStatus(false, false);
+        window.showErrorMessage(`Failed to connect to ${item.cluster.identity.clusterName}: ${error.message}`);
+    }
 });
