@@ -9,7 +9,7 @@ class LogManager implements Disposable {
     start(session: LogSession) {
         try {
             this.sessions.set(session.getUri(), session);
-            logger.log('Successfully setup port forwarder.', session.getUri());
+            logger.log('Successfully setup log session.', session.getUri());
         } catch (error: any) {
             logger.error('Failed to setup log session.', session.getUri(), error.message);
             window.showErrorMessage(`Failed to setup log session: ${error.message}`);
