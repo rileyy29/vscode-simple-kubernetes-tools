@@ -3,7 +3,7 @@ import { Cluster, ClusterIdentity } from '../cloud/cluster';
 import { ExternalProvider, type ProviderCluster } from '../cloud/models';
 import { STATE_CLUSTERS_KEY } from '../config';
 import { Client } from '../kubernetes/client';
-import { getAccessToken } from '../cloud/provider';
+import { cloudManager } from './cloud-manager';
 
 interface StoredCluster extends ClusterIdentity {
     provider: ProviderCluster;
@@ -58,7 +58,7 @@ class StateManager {
             throw new Error(`No stored kubeconfig found for cluster ${cluster.id}`);
         }
 
-        return new Client(kubeYAML, await getAccessToken(cluster.provider.name));
+        return new Client(kubeYAML, await cloudManager.getAccessToken(cluster.provider.name));
     }
 
     async wipeClusters() {
