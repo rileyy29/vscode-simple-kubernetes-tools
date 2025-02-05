@@ -1,11 +1,11 @@
 # Simple Kubernetes Tools for VS Code
 
-![CI Status](https://github.com/rileyy29/vscode-simple-kubernetes-tools/actions/workflows/ci.yml/badge.svg)
+![Build Status](https://github.com/rileyy29/vscode-simple-kubernetes-tools/actions/workflows/build.yml/badge.svg)
 ![Publish Status](https://github.com/rileyy29/vscode-simple-kubernetes-tools/actions/workflows/publish.yml/badge.svg)
 
 ![VSC to Kubernetes](resources/Git/Readme_Banner.png)
 
-A Visual Studio Code extension that provides an easy way to view perform simple actions on your Kubernetes Clusters.  
+A Visual Studio Code extension that provides an easy way to view & perform simple actions on your Kubernetes Clusters.  
 
 You can perform simple actions such as:
 * Restart Deployments

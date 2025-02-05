@@ -1,0 +1,71 @@
+name: Build
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      upload_artifact:
+        description: 'Upload artifact'
+        required: true
+        default: 'true'
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    permissions:
+      actions: read
+      contents: read
+      deployments: read
+      packages: none
+    env:
+      UPLOAD_ARTIFACT: ${{ github.event.inputs.upload_artifact || 'true' }}
+    steps:
+    - name: Checkout branch
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run tests (windows-latest)
+      if: runner.os != 'Linux'
+      run: npm run windows:test
+
+    - name: Run tests (ubuntu-latest)
+      if: runner.os == 'Linux'
+      run: xvfb-run -a npm run compile
+
+    - name: Package extension
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        npm run package
+        mkdir vsix
+        mv *.vsix vsix
+    
+    - name: Upload artifact
+      if: matrix.os == 'ubuntu-latest' && env.UPLOAD_ARTIFACT == 'true'
+      uses: actions/upload-artifact@v4
+      with: 
+        name: vsix
+        path: vsix

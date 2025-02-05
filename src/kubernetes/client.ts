@@ -1,19 +1,40 @@
 import { AppsV1Api, BatchV1Api, CoreV1Api, KubeConfig, type V1Deployment } from '@kubernetes/client-node';
-import { type ClusterPortForwardableService, type ClientPod, type ClientResource, type ClientRunnableResource, type NamespacedClusterObject, ClientViewableResource } from './models';
+import { ProviderAuthenticationToken } from '../cloud/models';
+import { type ClientViewableResource, type ClientPod, type ClientResource, type ClientRunnableResource, type ClusterPortForwardableService, type NamespacedClusterObject } from './models';
 
 export class Client {
     private config: KubeConfig = new KubeConfig();
 
-    constructor(_config: string | KubeConfig) {
+    constructor(_config: string | KubeConfig, token: ProviderAuthenticationToken = null) {
         if (_config instanceof KubeConfig) {
             this.config = _config;
         } else {
             this.config.loadFromString(_config);
         }
+
+        this.setToken(token);
     }
 
     getConfig() {
         return this.config;
+    }
+
+    private setToken(_token: ProviderAuthenticationToken) {
+        if (!_token || !_token.token) {
+            this.config.applyToHTTPSOptions({ headers: { Authorization: null } });
+            return;
+        }
+
+        this.config.applyToHTTPSOptions({ headers: { Authorization: `Bearer ${_token.token}` } });
+    }
+
+    async hasConnection(): Promise<boolean> {
+        try {
+            await this.config.makeApiClient(CoreV1Api).listNode();
+            return true;
+        } catch (error) {
+            return false;
+        }
     }
 
     async getNamespaces(): Promise<ClientResource[]> {

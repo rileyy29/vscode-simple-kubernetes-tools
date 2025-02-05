@@ -1,34 +1,141 @@
-name: Publish Extension
+name: Publish
+on: [workflow_dispatch]
 
-on:
-  workflow_run:
-    workflows: ["CI"]
-    types:
-      - completed
-  workflow_dispatch:
+permissions:
+  contents: read
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
 
 jobs:
-  publish:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+  build: 
+    name: Get variables
     runs-on: ubuntu-latest
-
+    outputs: 
+      current_version: ${{ steps.package_version.outputs.current_version }} 
+      current_changelog: ${{ steps.package_changelog.outputs.changes }}
+    permissions:
+      actions: read
+      contents: read
+      deployments: read
+      packages: none
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
 
       - name: Install dependencies
         run: npm install
 
       - name: Build extension
-        run: npm run vscode:prepublish
+        run: npm run compile
 
-      - name: Publish to VS Code Marketplace
-        uses: HaaLeo/publish-vscode-extension@v1.6.2
+      - name: Get current version
+        id: package_version
+        run: |
+          VERSION=$(jq -r '.version' package.json)
+          echo "current_version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Get current changelog
+        id: package_changelog
+        uses: mindsers/changelog-reader-action@v2.2.3
         with:
-          pat: ${{ secrets.VSCE_TOKEN }}
-          registryUrl: https://marketplace.visualstudio.com
+            validation_depth: 10
+            version: ${{ steps.package_version.outputs.current_version }}
+            path: 'CHANGELOG.md'
+
+  cancel:
+    name: Check existing releases
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check if release exists
+      id: check-release
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { data: releases } = await github.rest.repos.listReleases({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+          });
+          const currentVersion = '${{ needs.build.outputs.current_version }}';
+          const exists = releases.some(release => release.tag_name === currentVersion);
+          if (exists) {
+            core.setOutput('release_exists', 'true');
+            console.log(`Release already exists for version ${currentVersion}`);
+            process.exit(1);
+          } else {
+            core.setOutput('release_exists', 'false');
+          }
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Cancel if release exists
+      if: steps.check-release.outputs.release_exists == 'true'
+      run: exit 1
+
+  publish:
+    name: Publish to marketplace and create tagged release
+    runs-on: ubuntu-latest
+    outputs: 
+      vsix_name: ${{ steps.find-vsix.outputs.vsix_name }}
+      vsix_path: ${{ steps.find-vsix.outputs.vsix_path }}
+    needs: 
+      - build
+      - cancel
+    permissions:
+      actions: read
+      contents: write
+      deployments: read
+      packages: none
+      id-token: write
+    steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build extension
+        run: npm run compile
+
+      - name: Package extension
+        run: npm run package
+        
+      - name: Prepare vsix
+        id: find-vsix
+        run: |
+          asset_path='./simple-kubernetes-tools-${{ needs.build.outputs.current_version }}.vsix'
+          asset_name='simple-kubernetes-tools-${{ needs.build.outputs.current_version }}.vsix'
+          echo "vsix_path=$asset_path" >> $GITHUB_OUTPUT
+          echo "vsix_name=$asset_name" >> $GITHUB_OUTPUT
+
+      - name: Publish to marketplace
+        uses: HaaLeo/publish-vscode-extension@v2
+        with:
+          token: ${{ secrets.VSCE_TOKEN }}
+          extensionFile: ${{ steps.find-vsix.outputs.vsix_name }}
+
+      - name: Create tagged release
+        uses: softprops/action-gh-release@v2
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ needs.build.outputs.current_version }}
+          name: ${{ needs.build.outputs.current_version}}
+          body: ${{ needs.build.outputs.current_changelog }}
+          files: ${{ steps.find-vsix.outputs.vsix_name }}

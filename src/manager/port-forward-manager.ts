@@ -16,7 +16,11 @@ class PortForwardManager implements Disposable {
             const forwarder = new PortForward(cluster.client.getConfig(), true);
             const response = await cluster.client.getServiceWithPortForwardInfo(service, namespace);
 
-            const server = createServer(function (socket) {
+            const server = createServer({
+                allowHalfOpen: true,
+                noDelay: true,
+                keepAlive: true
+            }, function (socket) {
                 forwarder.portForward(namespace, response.pod, [response.targetPort], socket, socket, socket);
             });
 
