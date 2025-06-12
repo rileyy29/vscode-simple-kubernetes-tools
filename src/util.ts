@@ -31,7 +31,7 @@ export async function withLoadingSpinner<T>(
     message: string,
     task: () => Promise<T>
 ): Promise<T> {
-    const loadingItem = window.createStatusBarItem(StatusBarAlignment.Left, 1);
+    const loadingItem = window.createStatusBarItem(StatusBarAlignment.Left, 9999);
     loadingItem.text = `$(sync~spin) ${message}`;
     loadingItem.tooltip = 'Please wait...';
     loadingItem.show();
