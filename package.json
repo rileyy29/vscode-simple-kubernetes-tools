@@ -501,7 +501,7 @@
     "typescript": "^5.7.2"
   },
   "dependencies": {
-    "@azure/arm-containerservice": "^21.3.0",
+    "@azure/arm-containerservice": "^21.6.0",
     "@azure/arm-subscriptions": "^5.1.0",
     "@azure/identity": "^4.6.0",
     "@kubernetes/client-node": "^1.0.0",
