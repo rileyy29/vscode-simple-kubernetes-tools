@@ -1,4 +1,4 @@
-import { AppsV1Api, CoreV1Api, KubeConfig, type V1Deployment } from '@kubernetes/client-node';
+import { AppsV1Api, CoreV1Api, KubeConfig, V1Status, type V1Deployment } from '@kubernetes/client-node';
 import { ProviderAuthenticationToken } from '../cloud/models';
 import { type ClientPod, type ClientResource, type ClientRunnableResource, type ClusterPortForwardableService, type NamespacedClusterObject } from './models';
 
@@ -169,6 +169,16 @@ export class Client {
         return await api.patchNamespacedDeployment({
             namespace,
             body,
+            name
+        });
+    }
+
+    async deleteDeployment(namespace: NamespacedClusterObject, deployment: string | ClientResource): Promise<V1Status> {
+        const api = this.config.makeApiClient(AppsV1Api);
+        const name = typeof deployment === 'string' ? deployment : deployment.name;
+
+        return await api.deleteNamespacedDeployment({
+            namespace,
             name
         });
     }

@@ -23,6 +23,7 @@ import { serviceForwardingClearCommand } from './command/service-forwarding-clea
 import { logExportCommand } from './command/log-export';
 import { logStopCommand } from './command/log-stop';
 import { itemCopyNameCommand } from './command/item-copy-name';
+import { deploymentDeleteCommand } from './command/deployment-delete';
 
 export function activate(context: ExtensionContext) {
 	stateManager.context = context;
@@ -45,6 +46,7 @@ export function activate(context: ExtensionContext) {
 		clusterConnectCommand,
 		clusterDisconnectCommand,
 
+		deploymentDeleteCommand,
 		deploymentRestartCommand,
 		deploymentsRestartCommand,
 

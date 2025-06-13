@@ -31,6 +31,7 @@ export class CategoryItem extends BaseItem {
         }
 
         switch (this.category) {
+            case Category.Deployments:
             case Category.Pods:
                 this.subscription = beacon.pipe(beacon.getEventsForCluster(this.cluster), {
                     action: ['ADDED', 'DELETED'],

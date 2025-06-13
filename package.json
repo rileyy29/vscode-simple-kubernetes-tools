@@ -165,6 +165,11 @@
           "group": "2_navigation@1"
         },
         {
+          "command": "simple-kubernetes-tools.deploymentDelete",
+          "when": "view == explorerView && (viewItem == explorer-resource-Deployments_running || viewItem == explorer-resource-Deployments_not_running)",
+          "group": "2_navigation@2"
+        },
+        {
           "command": "simple-kubernetes-tools.clusterOpenInWeb",
           "when": "view == explorerView && (viewItem == explorer-clusterDisconnected || viewItem == explorer-clusterRunning || viewItem == explorer-clusterOffline)",
           "group": "1_navigation@1"
@@ -248,6 +253,10 @@
         },
         {
           "command": "simple-kubernetes-tools.deploymentRestart",
+          "when": "false"
+        },
+        {
+          "command": "simple-kubernetes-tools.deploymentDelete",
           "when": "false"
         },
         {
@@ -336,6 +345,10 @@
         "command": "simple-kubernetes-tools.deploymentRestart",
         "title": "Restart",
         "icon": "$(debug-restart)"
+      },
+      {
+        "command": "simple-kubernetes-tools.deploymentDelete",
+        "title": "Delete"
       },
       {
         "command": "simple-kubernetes-tools.deploymentsRestart",
