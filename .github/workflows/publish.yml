@@ -127,7 +127,7 @@ jobs:
       - name: Publish to marketplace
         uses: HaaLeo/publish-vscode-extension@v2
         with:
-          token: ${{ secrets.VSCE_TOKEN }}
+          pat: ${{ secrets.VSCE_TOKEN }}
           extensionFile: ${{ steps.find-vsix.outputs.vsix_name }}
 
       - name: Create tagged release
