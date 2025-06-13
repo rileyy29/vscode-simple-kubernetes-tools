@@ -503,7 +503,7 @@
   "dependencies": {
     "@azure/arm-containerservice": "^21.3.0",
     "@azure/arm-subscriptions": "^5.1.0",
-    "@azure/identity": "^4.6.0",
+    "@azure/identity": "^4.10.1",
     "@kubernetes/client-node": "^1.0.0",
     "rxjs": "^7.8.2"
   }
