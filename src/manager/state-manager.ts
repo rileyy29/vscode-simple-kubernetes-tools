@@ -58,7 +58,7 @@ class StateManager {
             throw new Error(`No stored kubeconfig found for cluster ${cluster.id}`);
         }
 
-        return new Client(kubeYAML, await cloudManager.getAccessToken(cluster.provider.name));
+        return new Client(kubeYAML);
     }
 
     async wipeClusters() {
