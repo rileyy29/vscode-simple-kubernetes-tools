@@ -2,6 +2,10 @@
 
 All notable changes to the "simple-kubernetes-tools" extension will be documented in this file.
 
+## [0.3.1]
+
+- Fix authentication for specific providers
+
 ## [0.3.0]
 
 - Improve credential management
