@@ -1,5 +1,5 @@
 import { azureProvider } from '../cloud/azure';
-import { ExternalProvider, ProviderAuthenticationToken } from '../cloud/models';
+import { ExternalProvider } from '../cloud/models';
 import { CloudProvider } from '../cloud/provider';
 
 class CloudManager {
@@ -13,7 +13,7 @@ class CloudManager {
         return provider;
     }
 
-    async getAccessToken(providerName: ExternalProvider): Promise<ProviderAuthenticationToken> {
+    async getAccessToken(providerName: ExternalProvider): Promise<void> {
         return await this.getProvider(providerName).authenticate();
     }
 }
